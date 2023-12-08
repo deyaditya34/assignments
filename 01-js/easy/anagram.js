@@ -12,8 +12,8 @@ function isAnagram(str1, str2) {
   let str1LowerCase = str1.toLowerCase();
   let str2LowerCase = str2.toLowerCase();
 
-  let found = false;
   for (let i = 0; i < str1LowerCase.length; i++) {
+  let found = false;
     for (let j = 0; j < str2LowerCase.length; j++) {
       if (str1LowerCase[i] === str2LowerCase[j]) {
         found = true;
@@ -25,6 +25,7 @@ function isAnagram(str1, str2) {
   }
 
   for (let i = 0; i < str2LowerCase.length; i++) {
+  found = false;
     for (let j = 0; j < str1LowerCase.length; j++) {
       if (str2LowerCase[i] === str1LowerCase[j]) {
         found = true;
