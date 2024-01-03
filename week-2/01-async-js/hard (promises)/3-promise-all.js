@@ -5,19 +5,41 @@
  */
 
 function wait1(t) {
-
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, t);
+  });
 }
 
 function wait2(t) {
-
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, t);
+  });
 }
 
 function wait3(t) {
-
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, t);
+  });
 }
 
 function calculateTime(t1, t2, t3) {
-
+  return Promise.all([wait1(t1), wait2(t2), wait3(t3)]).then(() => {
+    let greatest = t1;
+    if (t2 > t1) {
+      if (t3 > t2) {
+        greatest = t3;
+      } else {
+        greatest = t2;
+      }
+    }
+    return greatest*1000;
+  });
 }
 
 module.exports = calculateTime;

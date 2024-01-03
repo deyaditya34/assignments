@@ -39,11 +39,91 @@
 
   Testing the server - run `npm run test-todoServer` command in terminal
  */
-  const express = require('express');
-  const bodyParser = require('body-parser');
-  
-  const app = express();
-  
-  app.use(bodyParser.json());
-  
-  module.exports = app;
+const express = require("express");
+const bodyParser = require("body-parser");
+
+const app = express();
+
+app.use(bodyParser.json());
+
+let toDoList = [];
+
+app.get("/todos", (req, res) => {
+  res.json({
+    list: toDoList,
+  });
+});
+
+app.put("/todos/:id", (req, res) => {
+  const reqId = req.params.id;
+  const updateItem = req.body;
+
+  const existingItem = toDoList.filter((item, i) => {
+    if (item.ID === reqId) {
+      toDoList[i] === updateItem;
+    }
+  });
+
+  if (existingItem.length === 0) {
+    res.status(404).send("No item found to update");
+  } else {
+    res.json({
+      message: "item updated",
+    });
+  }
+});
+
+app.delete("/todos/:id", (req, res) => {
+  const reqId = req.params.id;
+
+  const newToDoList = toDoList.filter((item) => item.ID !== reqId);
+  const itemsDeleted = toDoList.length - newToDoList.length;
+
+  toDoList = newToDoList;
+
+  if (itemsDeleted > 0) {
+    res.json({
+      message:"item was found and deleted"
+    })
+  } else {
+    res.status(404).send("item not found to delete")
+  }
+});
+
+app.get("/todos/:id", (req, res) => {
+  const reqId = req.params.id;
+
+  const existingId = toDoList.filter((id) => {
+    id.ID === reqId;
+  });
+
+  if (existingId.length > 0) {
+    res.json({
+      item: existingId,
+    });
+  } else {
+    res.status(404).send("No item found");
+  }
+});
+
+app.post("/todos", (req, res) => {
+  const randomId = Math.floor(Math.random() * 10000);
+  Reflect.set(req.body, "ID", randomId);
+
+  const list = req.body;
+  toDoList.push(list);
+
+  res.json({
+    ID: list.ID,
+  });
+});
+
+app.use("*", (req, res) => {
+  res.status(404).send("route not defined")
+})
+
+// app.listen(3000, () => {
+//   console.log("server is listening at port 3000");
+// });
+
+module.exports = app;
