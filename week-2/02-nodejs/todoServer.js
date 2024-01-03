@@ -46,43 +46,36 @@ const app = express();
 
 app.use(bodyParser.json());
 
-let toDoList = [];
+let todos = [];
 
 app.get("/todos", (req, res) => {
-  res.json({
-    list: toDoList,
-  });
+  res.json(todos);
 });
 
 app.put("/todos/:id", (req, res) => {
   const reqId = req.params.id;
   const updateItem = req.body;
 
-  const existingItem = toDoList.filter((item, i) => {
-    if (item.ID === reqId) {
-      toDoList[i] === updateItem;
-    }
-  });
+  const todoIndex = todos.find((item) => item.id === parseInt(reqId))
 
-  if (existingItem.length === 0) {
+  if (todoIndex === -1) {
     res.status(404).send("No item found to update");
   } else {
-    res.json({
-      message: "item updated",
-    });
+    todos[todoIndex] = updateItem
+    res.json(todos[todoIndex]);
   }
 });
 
 app.delete("/todos/:id", (req, res) => {
   const reqId = req.params.id;
 
-  const newToDoList = toDoList.filter((item) => item.ID !== reqId);
-  const itemsDeleted = toDoList.length - newToDoList.length;
+  const newToDoList = todos.filter((item) => item.id !== parseInt(reqId));
+  const itemsDeleted = todos.length - newToDoList.length;
 
   toDoList = newToDoList;
 
   if (itemsDeleted > 0) {
-    res.json({
+    res.status(200).send({
       message:"item was found and deleted"
     })
   } else {
@@ -93,14 +86,13 @@ app.delete("/todos/:id", (req, res) => {
 app.get("/todos/:id", (req, res) => {
   const reqId = req.params.id;
 
-  const existingId = toDoList.filter((id) => {
-    id.ID === reqId;
+  const existingId = todos.filter((item) => {
+    console.log(item.id, parseInt(reqId))
+    return item.id === parseInt(reqId);
   });
-
+  console.log(existingId)
   if (existingId.length > 0) {
-    res.json({
-      item: existingId,
-    });
+    res.json(existingId[0]);
   } else {
     res.status(404).send("No item found");
   }
@@ -108,14 +100,14 @@ app.get("/todos/:id", (req, res) => {
 
 app.post("/todos", (req, res) => {
   const randomId = Math.floor(Math.random() * 10000);
-  Reflect.set(req.body, "ID", randomId);
+  Reflect.set(req.body, "id", randomId);
 
   const list = req.body;
-  toDoList.push(list);
+  todos.push(list);
 
-  res.json({
-    ID: list.ID,
-  });
+  res.status(201).json(
+    list,
+  );
 });
 
 app.use("*", (req, res) => {
